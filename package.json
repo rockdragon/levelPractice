@@ -1,0 +1,14 @@
+{
+  "name": "practice",
+  "version": "0.0.0",
+  "description": "practice",
+  "dependencies": {
+    "async": "*",
+    "log4js": "*",
+    "colors": "*",
+    "level": "*",
+    "level-subkey": "7.9.1",
+    "level-queryengine": "*",
+    "jsonquery-engine": "*"
+  }
+}
