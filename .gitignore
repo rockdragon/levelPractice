@@ -39,4 +39,5 @@ obj/
 _Releases/
 *.ldb
 *.dat
-result.json
+spiders/*.json
+

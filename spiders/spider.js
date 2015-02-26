@@ -1,5 +1,6 @@
 var cheerio = require('cheerio');
 var util = require('util');
+var _s = require('underscore.string');
 
 var By = require('selenium-webdriver').By,
     //until = require('selenium-webdriver').until,
@@ -10,6 +11,7 @@ var driver = new browser.Driver();
 var meta = {};
 
 function crawlPage(pageURL, cb) {
+    meta = {};
     driver.get(pageURL);
     driver.findElement(By.id('detail-tab-comm')).click().then(function () {
         driver.sleep(3000).then(function () {
@@ -30,32 +32,38 @@ function extractComments(cb) {
             $('table.com-item-main').each(function () {
                 var columns = $(this).find('td.com-i-column');
                 var k = $(columns[2]).children().first().children().last().text();
-                if(k == ' '){
-                    console.log($(columns[2]).children().first().children().last());
+                if(!_s.trim(k)){
+                    k = 'default';
                 }
                 var star = $(columns[1]).children().first().attr('class').substr(-1) + '星';
                 meta[k] = meta[k] || {};
                 meta[k]['count'] = meta[k].hasOwnProperty('count') ? meta[k]['count'] + 1 : 1;
                 meta[k][star] = meta[k].hasOwnProperty(star) ? meta[k][star] + 1 : 1;
                 console.log(util.inspect(meta));
+            });
 
-                process.nextTick(function () {
-                    var next = driver.findElement(By.className('ui-pager-next'));
-                    if (next) {
-                        next.click().then(function () {
-                            driver.sleep(2000).then(function () {
-                                extractComments(cb);
-                            });
-                        });
-                    } else {
-                        return cb(null, meta);
-                    }
+            var next =  driver.findElement(By.className('ui-pager-next'));
+            next.click().then(function () {
+                driver.sleep(2000).then(function () {
+                    extractComments(cb);
                 });
             });
+
+                //if (next) {
+                //    next.click().then(function () {
+                //        driver.sleep(2000).then(function () {
+                //            extractComments(cb);
+                //        });
+                //    });
+                //} else {
+                //    return cb(null, meta);
+                //}
+
         });
     })
     .then(null, function (err) {
-        cb(err, null);
+        //console.log(err.stack);
+        cb(null, meta);
     });
 }
 

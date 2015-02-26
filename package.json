@@ -13,6 +13,7 @@
     "ssh2": "*",
     "random-js": "*",
     "selenium-webdriver" : "*",
-    "cheerio": "*"
+    "cheerio": "*",
+    "underscore.string": "*"
   }
 }
