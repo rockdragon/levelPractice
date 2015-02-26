@@ -12,7 +12,7 @@ var meta = {};
 function crawlPage(pageURL, cb) {
     driver.get(pageURL);
     driver.findElement(By.id('detail-tab-comm')).click().then(function () {
-        driver.sleep(2000).then(function () {
+        driver.sleep(3000).then(function () {
             extractComments(cb);
         });
     });
@@ -27,11 +27,15 @@ function extractComments(cb) {
                 normalizeWhitespace: true,
                 xmlMode: true
             });
-            $('table.com-item-main tr').each(function () {
-                var columns = $(this).children();
+            $('table.com-item-main').each(function () {
+                var columns = $(this).find('td.com-i-column');
                 var k = $(columns[2]).children().first().children().last().text();
+                if(k == ' '){
+                    console.log($(columns[2]).children().first().children().last());
+                }
                 var star = $(columns[1]).children().first().attr('class').substr(-1) + '星';
-                meta[k] = meta.hasOwnProperty(k) ? meta[k] + 1 : 1;
+                meta[k] = meta[k] || {};
+                meta[k]['count'] = meta[k].hasOwnProperty('count') ? meta[k]['count'] + 1 : 1;
                 meta[k][star] = meta[k].hasOwnProperty(star) ? meta[k][star] + 1 : 1;
                 console.log(util.inspect(meta));
 
