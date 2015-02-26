@@ -9,6 +9,7 @@
     "level": "*",
     "level-subkey": "7.9.1",
     "level-queryengine": "*",
-    "jsonquery-engine": "*"
+    "jsonquery-engine": "*",
+    "ssh2": "*"
   }
 }
