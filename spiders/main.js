@@ -23,8 +23,8 @@ function task(url, fileName){
 
 async.series([
         //task('http://item.jd.com/1105402.html', 'hi-wifi.json'),
-        task('http://item.jd.com/933212.html', 'net-gear.json'),
-        task('http://item.jd.com/1238332.html', 'tp-link.json')
+        task('http://item.jd.com/933212.html', 'net-gear.new.json'),
+        task('http://item.jd.com/1238332.html', 'tp-link.new.json')
     ],
     function(){
     }
