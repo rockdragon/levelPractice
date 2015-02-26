@@ -39,14 +39,17 @@ function extractComments(cb) {
                 meta[k] = meta[k] || {};
                 meta[k]['count'] = meta[k].hasOwnProperty('count') ? meta[k]['count'] + 1 : 1;
                 meta[k][star] = meta[k].hasOwnProperty(star) ? meta[k][star] + 1 : 1;
-                console.log(util.inspect(meta));
+                //console.log(util.inspect(meta));
             });
 
-            var next =  driver.findElement(By.className('ui-pager-next'));
+            var next = driver.findElement(By.className('ui-pager-next'));
             next.click().then(function () {
                 driver.sleep(2000).then(function () {
                     extractComments(cb);
                 });
+            }).then(null, function (err) {
+                console.log(err.stack);
+                cb(null, meta);
             });
 
                 //if (next) {
@@ -62,7 +65,7 @@ function extractComments(cb) {
         });
     })
     .then(null, function (err) {
-        //console.log(err.stack);
+        console.log(err.stack);
         cb(null, meta);
     });
 }
