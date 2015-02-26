@@ -10,6 +10,9 @@
     "level-subkey": "7.9.1",
     "level-queryengine": "*",
     "jsonquery-engine": "*",
-    "ssh2": "*"
+    "ssh2": "*",
+    "random-js": "*",
+    "selenium-webdriver" : "*",
+    "cheerio": "*"
   }
 }

@@ -15,8 +15,8 @@ conn.on('ready', function() {
         });
     });
 }).connect({
-    host: '192.168.1.26',
+    host: '192.168.1.1',
     port: 22,
-    username: 'edge',
-    password: 'root'
+    username: '****',
+    password: '****'
 });
