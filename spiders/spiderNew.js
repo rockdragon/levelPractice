@@ -49,23 +49,34 @@ function parse(fn) {
     };
 }
 
+//Uncaught Exception
+process.on('uncaughtException', function (err) {
+    logger.error(err);
+});
+var domain = require('domain').create();
+domain.on('error', function (err) {
+    logger.error(err);
+});
+
 var productId = 190142;         //netgear
 var fileName = 'netgear.json';      //file
 var maxPageNo = 1866;               // max page
 var meta = {};
 
-co(function*(){
-    for(var pageNo = 1; pageNo <= maxPageNo; pageNo ++) {
-        var url = getPageUrl(productId, pageNo);
-        console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
-        yield crawlPage(url, parse);
-        console.log(util.inspect(meta));
-        console.log('-----------------<<<<<');
-        sleep(3);
-    }
+domain.run(function () {
+    co(function*() {
+        for (var pageNo = 1; pageNo <= maxPageNo; pageNo++) {
+            var url = getPageUrl(productId, pageNo);
+            console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
+            yield crawlPage(url, parse);
+            console.log(util.inspect(meta));
+            console.log('-----------------<<<<<');
+            sleep(3);
+        }
 
-    console.log('END ----------------->>>>');
-    fs.writeFileSync(fileName,  JSON.stringify(meta));
+        console.log('END ----------------->>>>');
+        fs.writeFileSync(fileName, JSON.stringify(meta));
+    });
 });
 
 //asynchronously version.
