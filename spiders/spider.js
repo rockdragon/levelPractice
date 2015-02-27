@@ -10,28 +10,44 @@ var driver = new browser.Driver();
 
 var meta = {};
 var callback = null;
+var current = 1;
+var rootURL = null;
+
+function getPageUrl(){
+    var url = util.format('%s-%d-0.html', rootURL, current);
+    console.log('URL:', url);
+    return url;
+}
 
 function crawlPage(pageURL, cb) {
     meta = {};
     callback = cb;
-    driver.get(pageURL);
-    driver.findElement(By.id('detail-tab-comm')).click().then(function () {
-        driver.sleep(3000).then(function () {
+    rootURL = pageURL;
+    driver.get(getPageUrl()).then(function() {
+        driver.sleep(2000).then(function() {
             extractComments();
-        });
+        })
     });
+    //driver.findElement(By.id('detail-tab-comm')).click().then(function () {
+    //    driver.sleep(3000).then(function () {
+    //        extractComments();
+    //    });
+    //});
 }
 
 function fetchNextPager(){
-    driver.findElement(By.className('ui-pager-next')).click().then(function () {
+    driver.get(getPageUrl()).then(function() {
         driver.sleep(2000).then(function () {
-            extractComments();
+            extractComments();;
         });
-    }).then(null, function (err) {
+    })
+    .then(null, function (err) {
         console.log('error message:', err.message);
-        if(_s.contains(err.message, 'stale')){//STALE_ELEMENT_REFERENCE
+        if(_s.contains(err.message, 'stale') || _s.contains(err.message, 'clickable')){//STALE_ELEMENT_REFERENCE
             console.log('motherfucker stale is coming, try to fetch element again.');
-            fetchNextPager();  //recursive calling
+            driver.sleep(2000).then(function () {
+                fetchNextPager();  //recursive calling
+            });
         } else {
             console.log(err.stack);
             callback(null, meta);
@@ -40,48 +56,41 @@ function fetchNextPager(){
 }
 
 function extractComments() {
-    driver.findElement(By.className('com-table-main')).getInnerHtml().then(function (innerHTML) {
-        driver.findElement(By.className('ui-page-curr')).getInnerHtml().then(function(currentPage){
+    driver.findElement(By.id('comments-list')).getInnerHtml().then(function (innerHTML) {
+        driver.findElement(By.className('current')).getInnerHtml().then(function(currentPage){
             console.log(util.format('\n当前页:%s ----------------->>>>', currentPage));
 
             var $ = cheerio.load(innerHTML, {
                 normalizeWhitespace: true,
                 xmlMode: true
             });
-            $('table.com-item-main').each(function () {
-                var columns = $(this).find('td.com-i-column');
-                var k = $(columns[2]).children().first().children().last().text();
+            $('div.mc div.item').each(function () {
+                var columns = $(this).find('div.dl-extra dd');
+                var k = _s.trim($(columns[0]).text());
                 if(!_s.trim(k)){
                     k = 'default';
                 }
-                var star = $(columns[1]).children().first().attr('class').substr(-1) + '星';
+                var star = $(this).find('div.o-topic span.star').attr('class').substr(-1) + '星';
                 meta[k] = meta[k] || {};
                 meta[k]['count'] = meta[k].hasOwnProperty('count') ? meta[k]['count'] + 1 : 1;
                 meta[k][star] = meta[k].hasOwnProperty(star) ? meta[k][star] + 1 : 1;
-                //console.log(util.inspect(meta));
+                console.log(util.inspect(meta));
             });
-
+            current = parseInt(currentPage, 10) + 1;
             fetchNextPager();
-
-            //driver.findElement(By.className('ui-pager-next')).click().then(function () {
-            //    driver.sleep(2000).then(function () {
-            //        extractComments();
-            //    });
-            //}).then(null, function (err) {
-            //    console.log('error message:', err.message);
-            //    if(_s.contains(err.message, 'stale')){//STALE_ELEMENT_REFERENCE
-            //        console.log('motherfucker stale is coming, try to fetch element again.');
-            //
-            //    } else {
-            //        console.log(err.stack);
-            //        callback(null, meta);
-            //    }
-            //});
         });
     })
     .then(null, function (err) {
-        console.log(err.stack);
-        callback(null, meta);
+            console.log('error message:', err.message);
+            if(_s.contains(err.message, 'stale') || _s.contains(err.message, 'clickable')){//STALE_ELEMENT_REFERENCE
+                driver.sleep(2000).then(function () {
+                    console.log('motherfucker stale is coming, try to fetch element again.');
+                    extractComments();  //recursive calling
+                });
+            } else {
+                console.log(err.stack);
+                callback(null, meta);
+            }
     });
 }
 

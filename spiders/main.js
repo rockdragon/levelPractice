@@ -24,8 +24,8 @@ function task(url, fileName){
 
 async.series([
         //task('http://item.jd.com/1211151.html', 'TOTOLINK.json')
-        task('http://item.jd.com/933212.html', 'net-gear.new.json'),
-        task('http://item.jd.com/1238332.html', 'tp-link.new.json')
+        task('http://club.jd.com/review/190142-1', 'net-gear.new.json'),
+        task('http://club.jd.com/review/1238332-1', 'tp-link.new.json')
     ],
     function(){
     }
