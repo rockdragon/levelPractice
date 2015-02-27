@@ -16,6 +16,9 @@
     "cheerio": "*",
     "underscore.string": "*",
     "cli_debug": "*",
-    "moment": "*"
+    "moment": "*",
+    "request-gb": "~0.1.8",
+    "bravo": "~0.1.5",
+    "co": "*"
   }
 }
