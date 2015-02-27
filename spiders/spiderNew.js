@@ -20,7 +20,7 @@ function crawlPage(url, parse) {
 }
 
 function getPageUrl(id, current){
-    var url = util.format('http://club.jd.com/review/%d-1-%d-0.html', id, current);
+    var url = util.format('http://club.jd.com/review/%d-1-%d.html', id, current);
     console.log('URL:', url);
     return url;
 }

@@ -9,39 +9,19 @@ var By = require('selenium-webdriver').By,
 var driver = new browser.Driver();
 
 var meta = {};
-var callback = null;
+var sleepSeconds = 10000;
 
 function crawlPage(pageURL, cb) {
     meta = {};
-    callback = cb;
     driver.get(pageURL);
     driver.findElement(By.id('detail-tab-comm')).click().then(function () {
-        driver.sleep(5000).then(function () {
-            extractComments();
+        driver.sleep(sleepSeconds).then(function () {
+            extractComments(cb);
         });
     });
 }
 
-function fetchNextPager(){
-    driver.findElement(By.className('ui-pager-next')).click().then(function () {
-        driver.sleep(5000).then(function () {
-            extractComments();
-        });
-    }).then(null, function (err) {
-        console.log('error message:', err.message);
-        if(_s.contains(err.message, 'stale')){//STALE_ELEMENT_REFERENCE
-            driver.sleep(5000).then(function () {
-                console.log('motherfucker stale is coming, try to fetch element again.');
-                fetchNextPager();  //recursive calling
-            });
-        } else {
-            console.log(err.stack);
-            callback(null, meta);
-        }
-    });
-}
-
-function extractComments() {
+function extractComments(cb) {
     driver.findElement(By.className('com-table-main')).getInnerHtml().then(function (innerHTML) {
         driver.findElement(By.className('ui-page-curr')).getInnerHtml().then(function(currentPage){
             console.log(util.format('\n当前页:%s ----------------->>>>', currentPage));
@@ -60,23 +40,42 @@ function extractComments() {
                 meta[k] = meta[k] || {};
                 meta[k]['count'] = meta[k].hasOwnProperty('count') ? meta[k]['count'] + 1 : 1;
                 meta[k][star] = meta[k].hasOwnProperty(star) ? meta[k][star] + 1 : 1;
-                console.log(util.inspect(meta));
+                //console.log(util.inspect(meta));
             });
 
-            fetchNextPager();
+            driver.findElement(By.className('ui-pager-next')).click().then(function () {
+                driver.sleep(sleepSeconds).then(function () {
+                    extractComments(cb);
+                });
+            }).then(null, function (err) {
+                if(_s.contains(err.message, 'stale') || _s.contains(err.message, 'clickable')){//STALE_ELEMENT_REFERENCE
+                    driver.sleep(sleepSeconds).then(function () {
+                        console.log('motherfucker stale is coming, try to fetch element again.');
+                        extractComments();  //recursive calling
+                    });
+                } else {
+                    console.log(err.stack);
+                    callback(null, meta);
+                }
+            });
+
+            //if (next) {
+            //    next.click().then(function () {
+            //        driver.sleep(2000).then(function () {
+            //            extractComments(cb);
+            //        });
+            //    });
+            //} else {
+            //    return cb(null, meta);
+            //}
+
         });
     })
         .then(null, function (err) {
-            if(_s.contains(err.message, 'stale') || _s.contains(err.message, 'clickable')){//STALE_ELEMENT_REFERENCE
-                driver.sleep(5000).then(function () {
-                    console.log('motherfucker stale is coming, try to fetch element again.');
-                    extractComments();  //recursive calling
-                });
-            } else {
-                console.log(err.stack);
-                callback(null, meta);
-            }
+            console.log(err.stack);
+            cb(null, meta);
         });
 }
 
 module.exports.crawlPage = crawlPage;
+

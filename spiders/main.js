@@ -15,8 +15,6 @@ function task(url, fileName){
                 console.log('END ----------------->>>>');
                 console.log(util.inspect(res));
 
-                console.log(new Date(), '< ==== >', res.start);
-
                 fs.writeFileSync(fileName,  JSON.stringify(res));
             }
             res = undefined;
