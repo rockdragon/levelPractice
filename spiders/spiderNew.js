@@ -45,7 +45,7 @@ function parse(fn) {
             //console.log(util.inspect(meta));
         });
 
-        fn(err, meta);
+        fn(err, html.length);
     };
 }
 
@@ -68,7 +68,8 @@ domain.run(function () {
         for (var pageNo = 1; pageNo <= maxPageNo; pageNo++) {
             var url = getPageUrl(productId, pageNo);
             console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
-            yield crawlPage(url, parse);
+            var size = yield crawlPage(url, parse);
+            console.log('page size:', size, 'bytes');
             console.log(util.inspect(meta));
             console.log('-----------------<<<<<');
             sleep(3);
