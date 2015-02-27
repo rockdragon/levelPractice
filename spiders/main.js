@@ -27,14 +27,14 @@ function task(url, fileName){
 
 async.series([
         //task('http://item.jd.com/1211151.html', 'TOTOLINK.json')
-        task('190142', 'net-gear.new.json'),
-        task('1238332', 'tp-link.new.json')
+        task('http://item.jd.com/190142.html', 'net-gear.json'),
+        task('http://item.jd.com/1238332.html', 'tp-link.json')
     ],
     function(){
     }
 );
 
-cli.debug();
+//cli.debug();
 
 //spider.crawlPage(pageURL, function(err, res){
 //    if(err)
