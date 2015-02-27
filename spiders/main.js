@@ -16,13 +16,14 @@ function task(url, fileName){
 
                 fs.writeFileSync(fileName,  JSON.stringify(res));
             }
+            res = undefined;
             cb();
         });
     };
 }
 
 async.series([
-        //task('http://item.jd.com/1105402.html', 'hi-wifi.json'),
+        //task('http://item.jd.com/1211151.html', 'TOTOLINK.json')
         task('http://item.jd.com/933212.html', 'net-gear.new.json'),
         task('http://item.jd.com/1238332.html', 'tp-link.new.json')
     ],

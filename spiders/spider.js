@@ -9,18 +9,37 @@ var By = require('selenium-webdriver').By,
 var driver = new browser.Driver();
 
 var meta = {};
+var callback = null;
 
 function crawlPage(pageURL, cb) {
     meta = {};
+    callback = cb;
     driver.get(pageURL);
     driver.findElement(By.id('detail-tab-comm')).click().then(function () {
         driver.sleep(3000).then(function () {
-            extractComments(cb);
+            extractComments();
         });
     });
 }
 
-function extractComments(cb) {
+function fetchNextPager(){
+    driver.findElement(By.className('ui-pager-next')).click().then(function () {
+        driver.sleep(2000).then(function () {
+            extractComments();
+        });
+    }).then(null, function (err) {
+        console.log('error message:', err.message);
+        if(_s.contains(err.message, 'stale')){//STALE_ELEMENT_REFERENCE
+            console.log('motherfucker stale is coming, try to fetch element again.');
+            fetchNextPager();  //recursive calling
+        } else {
+            console.log(err.stack);
+            callback(null, meta);
+        }
+    });
+}
+
+function extractComments() {
     driver.findElement(By.className('com-table-main')).getInnerHtml().then(function (innerHTML) {
         driver.findElement(By.className('ui-page-curr')).getInnerHtml().then(function(currentPage){
             console.log(util.format('\n当前页:%s ----------------->>>>', currentPage));
@@ -42,30 +61,27 @@ function extractComments(cb) {
                 //console.log(util.inspect(meta));
             });
 
-            driver.findElement(By.className('ui-pager-next')).click().then(function () {
-                driver.sleep(2000).then(function () {
-                    extractComments(cb);
-                });
-            }).then(null, function (err) {
-                console.log(err.stack);
-                cb(null, meta);
-            });
+            fetchNextPager();
 
-                //if (next) {
-                //    next.click().then(function () {
-                //        driver.sleep(2000).then(function () {
-                //            extractComments(cb);
-                //        });
-                //    });
-                //} else {
-                //    return cb(null, meta);
-                //}
-
+            //driver.findElement(By.className('ui-pager-next')).click().then(function () {
+            //    driver.sleep(2000).then(function () {
+            //        extractComments();
+            //    });
+            //}).then(null, function (err) {
+            //    console.log('error message:', err.message);
+            //    if(_s.contains(err.message, 'stale')){//STALE_ELEMENT_REFERENCE
+            //        console.log('motherfucker stale is coming, try to fetch element again.');
+            //
+            //    } else {
+            //        console.log(err.stack);
+            //        callback(null, meta);
+            //    }
+            //});
         });
     })
     .then(null, function (err) {
         console.log(err.stack);
-        cb(null, meta);
+        callback(null, meta);
     });
 }
 
