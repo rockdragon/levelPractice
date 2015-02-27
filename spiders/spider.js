@@ -6,12 +6,12 @@ var By = require('selenium-webdriver').By,
     //until = require('selenium-webdriver').until,
 //browser = require('selenium-webdriver/firefox');
     browser = require('selenium-webdriver/chrome');
+var driver = new browser.Driver();
 
 var meta = {};
 
 function crawlPage(pageURL, cb) {
     meta = {};
-    var driver = new browser.Driver();
     driver.get(pageURL);
     driver.findElement(By.id('detail-tab-comm')).click().then(function () {
         driver.sleep(3000).then(function () {
