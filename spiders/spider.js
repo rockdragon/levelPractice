@@ -42,8 +42,7 @@ function extractComments(cb) {
                 //console.log(util.inspect(meta));
             });
 
-            var next = driver.findElement(By.className('ui-pager-next'));
-            next.click().then(function () {
+            driver.findElement(By.className('ui-pager-next')).click().then(function () {
                 driver.sleep(2000).then(function () {
                     extractComments(cb);
                 });
