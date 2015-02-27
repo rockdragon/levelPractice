@@ -15,6 +15,7 @@
     "selenium-webdriver" : "*",
     "cheerio": "*",
     "underscore.string": "*",
-    "cli_debug": "*"
+    "cli_debug": "*",
+    "moment": "*"
   }
 }

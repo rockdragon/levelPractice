@@ -2,6 +2,7 @@ var async = require('async');
 var util = require('util');
 var fs = require('fs');
 var spider = require('./spider');
+var cli = require('cli_debug');
 //var pageURL = 'http://item.jd.com/1184730.html';
 
 function task(url, fileName){
@@ -14,6 +15,8 @@ function task(url, fileName){
                 console.log('END ----------------->>>>');
                 console.log(util.inspect(res));
 
+                console.log(new Date(), '< ==== >', res.start);
+
                 fs.writeFileSync(fileName,  JSON.stringify(res));
             }
             res = undefined;
@@ -24,12 +27,14 @@ function task(url, fileName){
 
 async.series([
         //task('http://item.jd.com/1211151.html', 'TOTOLINK.json')
-        task('http://club.jd.com/review/190142-1', 'net-gear.new.json'),
-        task('http://club.jd.com/review/1238332-1', 'tp-link.new.json')
+        task('190142', 'net-gear.new.json'),
+        task('1238332', 'tp-link.new.json')
     ],
     function(){
     }
 );
+
+cli.debug();
 
 //spider.crawlPage(pageURL, function(err, res){
 //    if(err)
