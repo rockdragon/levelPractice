@@ -59,8 +59,8 @@ co(function*(){
         console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
         yield crawlPage(url, parse);
         console.log(util.inspect(meta));
-        sleep(3);
         console.log('-----------------<<<<<');
+        sleep(3);
     }
 
     console.log('END ----------------->>>>');
