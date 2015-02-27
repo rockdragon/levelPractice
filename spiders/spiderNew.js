@@ -51,10 +51,11 @@ function parse(fn) {
 
 var productId = 190142;         //netgear
 var fileName = 'netgear.json';      //file
+var maxPageNo = 1866;               // max page
 var meta = {};
 
 co(function*(){
-    for(var pageNo = 1; pageNo <= 1866; pageNo ++) {
+    for(var pageNo = 1; pageNo <= maxPageNo; pageNo ++) {
         var url = getPageUrl(productId, pageNo);
         console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
         yield crawlPage(url, parse);
