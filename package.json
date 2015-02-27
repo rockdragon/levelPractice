@@ -14,6 +14,7 @@
     "random-js": "*",
     "selenium-webdriver" : "*",
     "cheerio": "*",
-    "underscore.string": "*"
+    "underscore.string": "*",
+    "cli_debug": "*"
   }
 }
