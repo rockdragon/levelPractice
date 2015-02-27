@@ -66,7 +66,19 @@ var meta = {};
 
 domain.run(function () {
     co(function*() {
-        for (var pageNo = 1; pageNo <= maxPageNo; pageNo++) {
+        //奇数
+        for (var pageNo = 1; pageNo <= maxPageNo; pageNo+=2) {
+            var url = getPageUrl(productId, pageNo);
+            console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
+            var size = yield crawlPage(url, parse);
+            console.log('page size:', size, 'bytes');
+            console.log(util.inspect(meta));
+            console.log('-----------------<<<<<');
+            sleep(sleepSeconds);
+        }
+
+        //偶数
+        for (var pageNo = 2; pageNo <= maxPageNo; pageNo+=2) {
             var url = getPageUrl(productId, pageNo);
             console.log('第', pageNo, '页', moment().format('YYYY-MM-D hh:mm:ss a'));
             var size = yield crawlPage(url, parse);
