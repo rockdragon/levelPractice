@@ -61,7 +61,7 @@ domain.on('error', function (err) {
 var productId = 190142;         //netgear
 var fileName = 'netgear.json';      //file
 var maxPageNo = 1866;               // max page
-var sleepSeconds = 5;
+var sleepSeconds = 10;
 var meta = {};
 
 domain.run(function () {
